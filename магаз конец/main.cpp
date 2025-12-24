@@ -31,6 +31,9 @@ double* priceArr = nullptr;
 unsigned int* coutArr = nullptr;
 bool isStorageCreated = false;
 std::unordered_set<char> specialSymbols;
+void CreateNewStorage();
+size_t NewstorageSize = 10;
+std::string input;
 //--------------------------------------------------служеб-------------------------------------------------------------
 std::unordered_set<char> passSymbols;
 bool isPassSetCreated = false;
@@ -1238,6 +1241,139 @@ void ChangePass()
 		}
 	}
 }
+void CreateNewStorage()
+{
+		if (isStorageCreated) {
+
+			delete[] idArr;
+			delete[] nameArr;
+			delete[] priceArr;
+			delete[] coutArr;
+
+			std::cout << "Старый склад удален. Создаем новый...\n";
+			Sleep(1500);
+		}
+
+		while (true) {
+			system("cls");
+			std::cout << "Создание нового склада\n";
+
+
+			std::cout << "Введите количество товаров на складе (от 1 до " << NewstorageSize << ")\nВвод: ";
+			Getline(input);
+
+			if (!IsNumber(input)) {
+				std::cout << "Ошибка! Введите число.\n";
+				Sleep(1500);
+				continue;
+			}
+
+			size_t itemCount = std::stoi(input);
+
+			if (itemCount < 1 || itemCount > NewstorageSize) {
+				std::cout << "Ошибка! Количество должно быть от 1 до " << NewstorageSize << ".\n";
+				Sleep(1500);
+				continue;
+			}
+
+			storageSize = itemCount;
+			idArr = new unsigned int[storageSize];
+			nameArr = new std::string[storageSize];
+			priceArr = new double[storageSize];
+			coutArr = new unsigned int[storageSize];
+			isStorageCreated = true;
+
+			std::cout << "\nСклад создан! Размер: " << NewstorageSize << " товаров.\n";
+			Sleep(1000);
+
+
+			for (size_t i = 0; i < NewstorageSize; i++) {
+				system("cls");
+
+				std::cout << "Добавление товара № " << (i + 1) << " из " << NewstorageSize << "\n";
+
+				
+				idArr[i] = i + 1;
+
+
+				while (true) {
+					std::cout << "Название товара: ";
+					Getline(input);
+
+					if (input.empty() || input.size() > 50) {
+						std::cout << "Ошибка! Название должно быть от 1 до 50 символов.\n";
+						Sleep(1000);
+						continue;
+					}
+					nameArr[i] = input;
+					break;
+				}
+
+
+				while (true) {
+					std::cout << "Цена товара (0-10000000): ";
+					Getline(input);
+
+					if (!IsNumber(input)) {
+						std::cout << "Ошибка! Введите число.\n";
+						Sleep(1000);
+						continue;
+					}
+
+					double price = std::stod(input);
+					if (price < 0 || price > 10000000) {
+						std::cout << "Ошибка! Цена должна быть от 0 до " << price << ".\n";
+						Sleep(1000);
+						continue;
+					}
+
+					priceArr[i] = price;
+					break;
+				}
+
+
+				while (true) {
+					std::cout << "Количество товара " << NewstorageSize << ".\n";
+					Getline(input);
+
+					if (!IsNumber(input)) {
+						std::cout << "Ошибка! Введите число.\n";
+						Sleep(1000);
+						continue;
+					}
+
+					unsigned int count = std::stoi(input);
+					if (count > 1000) {
+						std::cout << "Ошибка! Количество должно быть до " << count <<  ".\n";
+						Sleep(1000);
+						continue;
+					}
+
+					coutArr[i] = count;
+					break;
+				}
+
+				std::cout << "\n Товар добавлен!\n";
+				std::cout << "ID: " << idArr[i] << "\n";
+				std::cout << "Название: " << nameArr[i] << "\n";
+				std::cout << "Цена: " << priceArr[i] << " руб.\n";
+				std::cout << "Количество: " << coutArr[i] << " шт.\n\n";
+
+				if (i < storageSize - 1) {
+					std::cout << "Нажмите Enter для продолжения...";
+					std::cin.get();
+				}
+			}
+
+
+			std::cout << "Склад успешно создан!\n";
+			std::cout << "Всего товаров: " << storageSize << "\n";
+			std::cout << "Нажмите Enter для продолжения...";
+			std::cin.get();
+			break;
+		}
+	}
+
 void CreateStorage()
 {
 	const size_t staticSize = 10;
@@ -1786,9 +1922,8 @@ void Start()
 					{
 						if (isStorageCreated == false)
 						{
-							CreateEmptyStorage();
+							CreateNewStorage();
 							system("cls");
-							ShowSuperAdminMenu();
 							break;
 						}
 						//создать новый склад
@@ -1835,7 +1970,7 @@ void Start()
 }
 void CreateEmptyStorage()
 {
-	// если склад уже был — чистим память
+
 	if (isStorageCreated)
 	{
 		delete[] idArr;
